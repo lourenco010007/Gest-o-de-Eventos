@@ -3,12 +3,116 @@
     margin:0;
     color:#333;
     font-family: 'Roboto',Arial, Helvetica, sans-serif;
-    
-
 }
 
-#card-conteiner{
-    gap:10px;
+/* ===== NAVBAR ===== */
+.navbar.navbar-expand-lg {
+    background-color: #1e3c72 !important;
+    box-shadow: 0 2px 1px #333;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1030;
+}
+
+.navbar-brand {
+    color: #fff !important;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+
+
+.nav-link {
+    color: #fff !important;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.nav-link:hover,
+.nav-link.active a {
+    color: #ffc107 !important;
+    
+}
+/* ===== BOTÕES ===== */
+.btn-outline-success {
+    color: #f4f4f4 !important;
+    border-color: #ffc107 !important;
+}
+
+.btn-outline-success:hover {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: #1e3c72 !important;
+}
+
+/* ===== CARDS ===== */
+#card-conteiner {
+    gap: 10px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== CORPO GERAL ===== */
+html, body {
+    height: 100%;
+    background-color: #f9f9f9;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    padding-top: 80px;
+}
+
+header {
+    margin-bottom: 0;
+}
+
+main {
+    flex: 1;
+    padding: 2rem;
+}
+
+footer {
+    background-color: #1e3c72;
+    color: #f4f4f4 !important;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+/* ===== GRÁFICOS ===== */
+.card canvas {
+    width: 100% !important;
+    height: 220px !important;
+}
+
+@media (min-width: 992px) {
+    .card.mb-4 .card-body canvas {
+        height: 260px !important;
+    }
+}
+
+/* Ajustes do dropdown */
+.dropdown-menu {
+    min-width: 12rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    border-radius: 6px;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255,193,7,0.08);
 }
 
 

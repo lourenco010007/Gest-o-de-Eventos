@@ -4,8 +4,16 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\EventoController;
 
-// Home
-Route::get('/', [EventoController::class, 'index']);
+//Home
+Route::get('/', function() {
+    return view('pages.home');
+});
+
+
+// evento
+Route::get('/eventos', [EventoController::class, 'index']);
+// Dados do dashboard (JSON)
+Route::get('/dashboard/data', [EventoController::class, 'dashboardData']);
 
 // About
 Route::get('/about', function () {

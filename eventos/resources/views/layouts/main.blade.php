@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
 
+<!--Bootstrap-->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
 <!--Css Global-->
 <link rel="stylesheet" href="/css/index.css">
-
-<!--Bootstrap-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
 <!--Fontes-->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,6 +30,15 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="/">Inicio</a>
         </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="eventosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Eventos
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="eventosDropdown">
+            <li><a class="dropdown-item" href="/eventos">Ver Eventos</a></li>
+            <li><a class="dropdown-item" href="/eventos/create">Cadastrar Evento</a></li>
+          </ul>
+        </li>
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="/about">Sobre Nós</a>
         </li>
@@ -46,7 +55,9 @@
   </div>
 </nav>
     </header>
-@yield('content')
+    <main>
+        @yield('content')
+    </main>
 <footer>
 <p>&copy; 2026 Gestao de Eventos. Todos os direitos reservados.</p>
 </footer>
