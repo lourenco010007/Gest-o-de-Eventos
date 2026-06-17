@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('date');
             $table->string('city');
             $table->boolean('private');
+            $table->string('salon');
             $table->string('image')->nullable();
 
         });

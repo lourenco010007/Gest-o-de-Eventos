@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Evento;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+
+use function Laravel\Prompts\search;
 
 class EventoController extends Controller
 {
@@ -14,6 +17,62 @@ class EventoController extends Controller
     public function index(){
         $eventos = Evento::all();
         return view('pages.eventos', compact('eventos'));
+    }
+
+    public function create(){
+        return view('form.cadastro');   
+    }
+    
+    public function store(Request $request){
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'date' => 'required|date',
+            'city' => 'required|string|max:255',
+            'salon' => 'required|string|max:255',
+        ]);
+
+        try {
+            $evento = new Evento;
+            $evento->title = $request->title;
+            $evento->description = $request->description;
+            $evento->date = $request->date;
+            $evento->city = $request->city;
+            $evento->private = $request->private;
+            $evento->salon = $request->salon;
+            $evento->image=$request->image;
+            $evento->items=$request->items;
+            $evento->participantes=$request->participantes;
+            $evento->email=$request->email;
+            $evento->hora=$request->hora;
+            $evento->tipo=$request->tipo;
+
+            //image
+            if($request->hasFile('image') && $request->file('image')->isValid()){
+                $requestImage= $request->image;
+                
+                $extension= $requestImage->extension(); 
+
+                $imageName =  md5($requestImage->getClientOriginalName() .strtotime("now")) . "." . $extension;
+
+                $request-> image->move(public_path('img/events'), $imageName);
+                
+                $evento->image=$imageName;
+
+            
+            }   
+            $evento->save();
+
+            return redirect('/eventos')->with('success', 'Evento criado com sucesso.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->with('error', 'Algo deu errado ao cadastrar o evento. Tente novamente.');
+        }
+        
+    }
+      public function show($id)
+    {
+        $evento = Evento::findOrFail($id);
+        return view('pages.mostrar', ['evento' => $evento]);
     }
 
     public function dashboardData()
@@ -62,4 +121,8 @@ class EventoController extends Controller
             'eventsByCity' => $byCity,
         ]);
     }
+    
+
 }
+
+

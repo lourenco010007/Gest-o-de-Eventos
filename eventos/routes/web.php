@@ -8,12 +8,15 @@ use App\Http\Controllers\EventoController;
 Route::get('/', function() {
     return view('pages.home');
 });
-
+// Dados do dashboard (JSON)
+Route::get('/dashboard/data', [EventoController::class, 'dashboardData']);
 
 // evento
 Route::get('/eventos', [EventoController::class, 'index']);
-// Dados do dashboard (JSON)
-Route::get('/dashboard/data', [EventoController::class, 'dashboardData']);
+Route::get('/eventos/create', [EventoController::class, 'create']);
+Route::post('/eventos', [EventoController::class, 'store']);
+Route::get('/eventos/{id}', [EventoController::class, 'show']);
+
 
 // About
 Route::get('/about', function () {
@@ -24,4 +27,5 @@ Route::get('/about', function () {
 Route::get('/contact', function (){
     return view('pages.contact');
 });
+
 

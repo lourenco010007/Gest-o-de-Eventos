@@ -16,6 +16,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
+<!--Icones-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 <body>
     <header>
@@ -26,37 +29,54 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/">Inicio</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="eventosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Eventos
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="eventosDropdown">
-            <li><a class="dropdown-item" href="/eventos">Ver Eventos</a></li>
-            <li><a class="dropdown-item" href="/eventos/create">Cadastrar Evento</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/about">Sobre Nós</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/contact">Contacto</a>
-        </li>
-      </ul>
-        
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Pesquisar..." aria-label="Pesquisar"/>
-        <button class="btn btn-outline-success" type="submit">Pesquisar</button>
-      </form>
-    </div>
+  <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="/">Dashboard</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="/eventos">Eventos</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="/eventos/create">Cadastrar Evento</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="/about">Sobre Nós</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="/contact">Contacto</a>
+    </li>
+  </ul>
+</div>
   </div>
 </nav>
     </header>
     <main>
+      <div class="conteiner-fluid">
+        <div class="row">
+          @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
+              {{ session('success') }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+          @endif
+
+          @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show w-100" role="alert">
+              {{ session('error') }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+          @endif
+
+          @if(session('msg'))
+            <div class="alert alert-info alert-dismissible fade show w-100" role="alert">
+              {{ session('msg') }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+          @endif
+
         @yield('content')
+        </div>
+      </div>
     </main>
 <footer>
 <p>&copy; 2026 Gestao de Eventos. Todos os direitos reservados.</p>
