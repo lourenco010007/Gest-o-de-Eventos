@@ -4,40 +4,55 @@
 
 @section('content')
 
-<div class="container py-5">
-    <h1 class="mb-3">Sistema de Gestão Eventos!</h1>
-    <p class="mb-4">Verifique a agenda dos eventos em nossos salões.</p>
+<section class="content-shell">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Agenda publica</p>
+            <h1>Eventos disponiveis</h1>
+        </div>
+        @auth
+            <a href="/eventos/create" class="btn btn-primary">Marcar evento</a>
+        @endauth
+    </div>
 
-    @if(isset($eventos) && count($eventos) > 0)
-        <div id="card-container" class="row g-2">
+    @if($eventos->isEmpty())
+        <div class="empty-state">Nenhum evento encontrado.</div>
+    @else
+        <div class="event-grid">
             @foreach($eventos as $evento)
-                <div class="col-12 col-sm-6 col-md-4 col-xl-3">
-                    <div class="card h-100 shadow-sm overflow-hidden">
-                        @if(isset($evento->image))
-                            <img src="/img/events/{{ $evento->image }}" class="card-img-top" alt="{{ $evento->title }}">
-                        @endif
-                        <div class="card-body d-flex flex-column gap-3">
-                            <div>
-                                <h5 class="card-title mb-2">{{ $evento->title }}</h5>
-                                <p class="card-text text-muted small mb-0">{{ $evento->description }}</p>
-                            </div>
-                            <div class="mt-auto">
-                                <p class="card-text mb-1"><strong>Data:</strong> {{ $evento->date }}</p>
-                                <p class="card-text mb-1"><strong>Cidade:</strong> {{ $evento->city }}</p>
-                                <p class="card-text mb-0"><strong>Salão:</strong> {{ $evento->salon }}</p>
-                                <a href="/eventos/{{ $evento->id }}" class="btn btn-secondary mt-2">Saber mais</a>
-                            </div>
-                        </div>
+                <article class="event-card">
+                    <div class="event-card-top">
+                        <span class="status-pill status-{{ $evento->status }}">{{ str_replace('_', ' ', $evento->status) }}</span>
+                        <span class="event-date">{{ optional($evento->date)->format('d/m/Y') }}</span>
                     </div>
-                </div>
+
+                    @if($evento->image)
+                        <img src="{{ asset('img/eventos/' . $evento->image) }}" class="event-cover" alt="{{ $evento->title }}">
+                    @endif
+
+                    <h3>{{ $evento->title }}</h3>
+                    <p>{{ $evento->description }}</p>
+
+                    <div class="event-meta">
+                        <span><i class="fa-solid fa-location-dot"></i> {{ optional($evento->salao)->nome ?? $evento->salon }}</span>
+                        <span><i class="fa-solid fa-city"></i> {{ $evento->city }}</span>
+                        @if($evento->hora_inicio && $evento->hora_fim)
+                            <span><i class="fa-solid fa-clock"></i> {{ \Carbon\Carbon::parse($evento->hora_inicio)->format('H:i') }} - {{ \Carbon\Carbon::parse($evento->hora_fim)->format('H:i') }}</span>
+                        @endif
+                    </div>
+
+                    <div class="event-actions">
+                        <a href="/eventos/{{ $evento->id }}" class="btn btn-sm btn-outline-primary">Ver</a>
+                        @auth
+                            @if(auth()->user()->isAdmin() || ($evento->user_id === auth()->id() && $evento->status === 'pendente'))
+                                <a href="/eventos/edit/{{ $evento->id }}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                            @endif
+                        @endauth
+                    </div>
+                </article>
             @endforeach
         </div>
-    @else   
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>Nenhum evento encontrado!</strong> Não existem eventos agendados de momento.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
     @endif
-</div>
-@endsection
+</section>
 
+@endsection
