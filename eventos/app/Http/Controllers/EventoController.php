@@ -46,7 +46,7 @@ class EventoController extends Controller
         return view('pages.home', compact('saloes', 'avisos', 'proximosEventos'));
     }
 
-    public function index()
+    public function index(Request $request)
     {
         if (! Schema::hasTable('eventos')) {
             return view('pages.eventos', ['eventos' => collect()]);
@@ -54,8 +54,9 @@ class EventoController extends Controller
 
         $query = Evento::with(['salao', 'user'])->orderBy('date')->orderBy('hora_inicio');
 
-        if (! auth()->user()?->isAdmin()) {
-            $query->where('private', false);
+        if (! $request->user()?->isAdmin()) {
+            $query->where('private', false)
+                  ->where('status', Evento::STATUS_CONFIRMADO);
         }
 
         $eventos = $query->get();
@@ -206,13 +207,21 @@ class EventoController extends Controller
         return redirect('/admin')->with('success', 'Evento removido com sucesso.');
     }
 
-    public function show(int $id)
+    public function show(Request $request, int $id)
     {
         if (! Schema::hasTable('eventos')) {
             abort(404);
         }
 
         $evento = Evento::with(['salao', 'user'])->findOrFail($id);
+
+        $user    = $request->user();
+        $isAdmin = $user?->isAdmin();
+        $isOwner = $user && $evento->user_id === $user->id;
+
+        if (! $isAdmin && ! $isOwner) {
+            abort(403, 'Acesso nao autorizado.');
+        }
 
         return view('pages.mostrar', ['evento' => $evento]);
     }

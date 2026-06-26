@@ -63,7 +63,7 @@
                         @else
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->is('about') ? 'active' : '' }}" href="/about">
-                                    <i class="fa-solid fa-circle-info"></i> Sobre Nos
+                                    <i class="fa-solid fa-circle-info"></i> Sobre Nós
                                 </a>
                             </li>
                             <li class="nav-item">

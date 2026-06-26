@@ -83,45 +83,41 @@
         <input type="number" class="form-control @error('participantes') is-invalid @enderror"
                id="participantes" name="participantes"
                placeholder="Nº de participantes"
+               min="1"
                value="{{ old('participantes') }}" required>
         @error('participantes') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
 
     <div class="mb-3">
-        <label for="hora" class="form-label">Duração do evento (em horas)</label>
-        <input type="number" class="form-control @error('hora') is-invalid @enderror"
-               id="hora" name="hora"
-               placeholder="Ex: 8"
-               value="{{ old('hora') }}" required>
-        @error('hora') <div class="invalid-feedback">{{ $message }}</div> @enderror
-    </div>
-
-    <div class="mb-3">
-        <label for="city" class="form-label">Cidade</label>
-        <select class="form-select @error('city') is-invalid @enderror" id="city" name="city" required>
-            <option value="" disabled selected>A cidade do evento</option>
-            @foreach (['Matola', 'Maputo', 'Sofala', 'Tete'] as $cidade)
-                <option value="{{ $cidade }}" {{ old('city') == $cidade ? 'selected' : '' }}>{{ $cidade }}</option>
-            @endforeach
-        </select>
-        @error('city') <div class="invalid-feedback">{{ $message }}</div> @enderror
-    </div>
-
-    <div class="mb-3">
-        <label for="salon" class="form-label">Salão</label>
-        <select class="form-select @error('salon') is-invalid @enderror" id="salon" name="salon" required>
-            <option value="" disabled selected>O salão ideal para o evento</option>
-            @foreach (['WestPoint', 'El Shadai', 'Goodness', 'Lovely'] as $salao)
-                <option value="{{ $salao }}" {{ old('salon') == $salao ? 'selected' : '' }}>{{ $salao }}</option>
-            @endforeach
-        </select>
-        @error('salon') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        <label for="salao_id" class="form-label">Salão</label>
+        @if ($saloes->isEmpty())
+            <div class="alert alert-warning">
+                Nenhum salão disponível no momento. Por favor, contacte o administrador.
+            </div>
+        @else
+            <select class="form-select @error('salao_id') is-invalid @enderror"
+                    id="salao_id" name="salao_id" required>
+                <option value="" disabled {{ old('salao_id') ? '' : 'selected' }}>Selecione o salão</option>
+                @foreach ($saloes as $salao)
+                    <option value="{{ $salao->id }}"
+                            data-cidade="{{ $salao->cidade }}"
+                            data-capacidade="{{ $salao->capacidade }}"
+                            {{ old('salao_id') == $salao->id ? 'selected' : '' }}>
+                        {{ $salao->nome }} — {{ $salao->cidade }}
+                        @if ($salao->capacidade)
+                            (cap. {{ $salao->capacidade }})
+                        @endif
+                    </option>
+                @endforeach
+            </select>
+            @error('salao_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        @endif
     </div>
 
     <div class="mb-3">
         <label for="private" class="form-label">O evento é privado?</label>
         <select class="form-select" id="private" name="private">
-            <option value="0" {{ old('private') == '0' ? 'selected' : '' }}>Não</option>
+            <option value="0" {{ old('private', '0') == '0' ? 'selected' : '' }}>Não</option>
             <option value="1" {{ old('private') == '1' ? 'selected' : '' }}>Sim</option>
         </select>
     </div>
@@ -162,7 +158,7 @@
 
     <div class="mb-3">
         <label for="image" class="form-label">Imagem do evento (Opcional)</label>
-        <input class="form-control" type="file" id="image" name="image">
+        <input class="form-control" type="file" id="image" name="image" accept="image/*">
     </div>
 
     <button type="submit" class="btn btn-primary">Cadastrar Evento</button>
@@ -172,7 +168,7 @@
 @push('scripts')
 <script>
 (function () {
-    const fields = ['salon', 'date', 'hora_inicio', 'hora_fim'];
+    const fields = ['salao_id', 'date', 'hora_inicio', 'hora_fim'];
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     let debounce;
 
@@ -187,15 +183,15 @@
     }
 
     async function checkConflito() {
-        const salon = document.getElementById('salon').value;
-        const date = document.getElementById('date').value;
+        const salaoId    = document.getElementById('salao_id')?.value;
+        const date       = document.getElementById('date').value;
         const horaInicio = document.getElementById('hora_inicio').value;
-        const horaFim = document.getElementById('hora_fim').value;
-        const alert = document.getElementById('conflict-alert');
-        const btn = document.querySelector('button[type="submit"]');
+        const horaFim    = document.getElementById('hora_fim').value;
+        const alertEl    = document.getElementById('conflict-alert');
+        const btn        = document.querySelector('button[type="submit"]');
 
-        if (!salon || !date || !horaInicio || !horaFim) {
-            alert.classList.remove('show');
+        if (!salaoId || !date || !horaInicio || !horaFim) {
+            alertEl.classList.remove('show');
             btn.disabled = false;
             return;
         }
@@ -207,18 +203,25 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken,
                 },
-                body: JSON.stringify({ salon, date, hora_inicio: horaInicio, hora_fim: horaFim }),
+                body: JSON.stringify({
+                    salao_id: salaoId,
+                    date,
+                    hora_inicio: horaInicio,
+                    hora_fim: horaFim
+                }),
             });
 
             const data = await res.json();
 
             if (data.conflito) {
+                const salaoNome = document.getElementById('salao_id')
+                    .options[document.getElementById('salao_id').selectedIndex].text;
                 document.getElementById('conflict-message').innerHTML =
-                    `Conflito de horário detectado. O salão ${salon} já está reservado das ${data.conflito.hora_inicio} às ${data.conflito.hora_fim}.`;
-                alert.classList.add('show');
+                    `Conflito de horário detectado. O salão <strong>${salaoNome}</strong> já está reservado das ${data.conflito.hora_inicio} às ${data.conflito.hora_fim} para o evento <em>${data.conflito.title}</em>.`;
+                alertEl.classList.add('show');
                 btn.disabled = true;
             } else {
-                alert.classList.remove('show');
+                alertEl.classList.remove('show');
                 btn.disabled = false;
             }
         } catch (e) {

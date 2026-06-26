@@ -41,5 +41,5 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', fn () => auth()->user()?->isAdmin() ? redirect('/admin') : redirect('/meus-eventos'))->name('dashboard');
+    Route::get('/dashboard', function (\Illuminate\Http\Request $request) { return $request->user()?->isAdmin() ? redirect('/admin') : redirect('/meus-eventos'); })->name('dashboard');
 });
